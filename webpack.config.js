@@ -9,6 +9,18 @@ export default {
     entry: [
         './src/index.js'
     ],
+    output: {
+        path: path.resolve('dist'),
+        filename: 'build.[contenthash].js'        
+    },        
+    plugins: [
+        new HtmlWebpackPlugin({
+            filename: 'index.html',
+            template: 'src/index.html'
+        }),
+        new CleanWebpackPlugin(),
+        new MiniCssExtractPlugin()
+    ],
     module: {
 		rules: [
 			{
@@ -16,14 +28,5 @@ export default {
 				use: ['style-loader', 'css-loader'],
 			},
 		],
-	},
-    output: {
-        filename: 'build.[contenthash].js',
-        path: path.resolve('dist'),
-    },
-    plugins: [
-        new HtmlWebpackPlugin(),
-        new CleanWebpackPlugin(),
-        new MiniCssExtractPlugin()
-    ]
+	}
 };
