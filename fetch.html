@@ -6,16 +6,45 @@
 	<title>Document</title>
 </head>
 <body>
-	<ul></ul>
+	<div class="container">
+		<ul class="list"></ul>
+		<div class="select"></div>
+	</div>
 </body>
 </html>
+
+<style>
+	.container {
+		display: flex;
+  		align-items: baseline;
+	}
+
+	ul {
+		display: inline-block;
+		list-style-type: none;
+		margin-right: 20px;
+	}
+
+	ul li {
+		cursor: pointer;
+		margin-bottom: 5px;
+	}
+
+	ul li.active {
+		color:  red;
+	}
+
+	.select {
+		position: sticky;
+		top: 0;
+	}
+</style>
 
 <script>
 
 	async function getResponse() {
 		let response = await fetch('https://countryapi.io/api/all?apikey=kqhXNILSSIIjj9iHnwKwhVA0UJwcGG7a6xefBptS')
 		let content = await response.json()
-		console.log(content)
 		
 		let key
 		let countries = []
@@ -28,34 +57,48 @@
 		out(content, countries)
 	}
 
-	function out(content, arr) {
-		
-		let ul = document.querySelector('ul')
+	function out(content, arr) {		
+		let list = document.querySelector('.list')		
 		
 		arr.forEach(item => {
 			let li = document.createElement('li')
-			let a = document.createElement('a')
-			a.innerHTML = item
-			a.addEventListener('click', getElem)
-			li.appendChild(a)			
-			ul.appendChild(li)
+			li.innerHTML = item
+			li.addEventListener('click', getElem)
+			list.appendChild(li)
 		})
 
 		function getElem() {
 			let val = this.innerHTML
+			let select = document.querySelector('.select')
+			let li = document.querySelectorAll('li')
+			let borders = []
+			let elems = ''
+			li.forEach(item => item.classList.remove('active'))
+			this.classList.add('active')
+
 
 			for(let key in content) {
 				let obj = content[key]
 				if(obj.name === val) {
-					let borders = obj.borders
-					console.log(borders)
-					//borders.forEach(item => console.log(content.item))
-				}				
+					if(Array.isArray(obj.borders)) {
+						borders = obj.borders						
+						for(let key in content) {
+							let obj2 = content[key]
+							if(borders.includes(obj2.alpha3Code)) {
+								elems += `<p>Страна: <a href="">${obj2.name}</a>, Площадь: ${obj2.area}</p>`
+							}							
+						}
+						select.innerHTML = elems
+					} else {
+						select.innerHTML = 'not border countis!'
+					}
+				}
 			}
 		}
 	}
 	
 	getResponse()
+	
 
 
 
@@ -71,6 +114,7 @@
 
 
 </script>
+
 
 
 
