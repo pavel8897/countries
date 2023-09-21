@@ -27,6 +27,13 @@ export default {
 				test: /\.css$/i,
 				use: ['style-loader', 'css-loader'],
 			},
+            {
+                test: /\.js$/, // Регулярное выражение для определения JavaScript файлов
+                exclude: /node_modules/, // Исключаем папку node_modules
+                use: {
+                  loader: 'babel-loader', // Используем Babel для транспиляции ES модулей
+                },
+            },
 		],
 	}
 };

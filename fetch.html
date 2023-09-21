@@ -38,85 +38,82 @@
 		position: sticky;
 		top: 0;
 	}
+
+	.select p {
+		cursor: pointer;
+	}
 </style>
 
 <script>
 
 	async function getResponse() {
-		let response = await fetch('https://countryapi.io/api/all?apikey=kqhXNILSSIIjj9iHnwKwhVA0UJwcGG7a6xefBptS')
-		let content = await response.json()
+		let response = await fetch('https://countryapi.io/api/all?apikey=gDyroqqAORtV3IGsmXJvlKGZ3TfTnl9Zc3IQpRaI');
+		let content = await response.json();
 		
-		let key
-		let countries = []
+		let key;
+		let countries = [];
 
 		for(key in content) {
-			countries.push(content[key].name)
+			countries.push(content[key].name);
 		}
-		countries = countries.sort()
-
-		out(content, countries)
+		countries = countries.sort();
+		out(content, countries);
 	}
 
-	function out(content, arr) {		
-		let list = document.querySelector('.list')		
+	function out(content, arr) {
+		let list = document.querySelector('.list');
 		
 		arr.forEach(item => {
-			let li = document.createElement('li')
-			li.innerHTML = item
-			li.addEventListener('click', getElem)
-			list.appendChild(li)
+			let li = document.createElement('li');
+			li.innerHTML = item;
+			li.addEventListener('click', function() {
+				let elem = item;
+				getElem(elem);
+			})
+			list.appendChild(li);
 		})
 
-		function getElem() {
-			let val = this.innerHTML
-			let select = document.querySelector('.select')
-			let li = document.querySelectorAll('li')
-			let borders = []
-			let elems = ''
-			li.forEach(item => item.classList.remove('active'))
-			this.classList.add('active')
-
-
+		function getElem(el) {
+			let select = document.querySelector('.select');
+			let li = document.querySelectorAll('li');
+			let borders = [];
+			let elems = '';
+			
+			li.forEach(item => {
+				item.classList.remove('active');
+				if(item.innerHTML === el) {
+					item.classList.add('active');
+					item.scrollIntoView({ behavior: 'smooth' });
+				}
+			})
+			
 			for(let key in content) {
-				let obj = content[key]
-				if(obj.name === val) {
+				let obj = content[key];
+				if(obj.name === el) {
 					if(Array.isArray(obj.borders)) {
-						borders = obj.borders						
+						select.innerHTML = '';
+						borders = obj.borders;						
 						for(let key in content) {
-							let obj2 = content[key]
+							let obj2 = content[key];
 							if(borders.includes(obj2.alpha3Code)) {
-								elems += `<p>Страна: <a href="">${obj2.name}</a>, Площадь: ${obj2.area}</p>`
-							}							
+								let link = document.createElement('p');
+								link.innerHTML = `Страна: ${obj2.name}, Площадь: ${obj2.area}`;
+								link.addEventListener('click', function() {
+									let elem = obj2.name;
+									getElem(elem);
+								})
+								select.appendChild(link);
+							}
 						}
-						select.innerHTML = elems
 					} else {
-						select.innerHTML = 'not border countis!'
+						select.innerHTML = `<p>${obj.name} не имеет совместных границ!</p>`;
 					}
 				}
 			}
 		}
 	}
 	
-	getResponse()
-	
-
-
-
-	/*async function getResponse() {
-		let response = await fetch('https://countryapi.io/api/all?apikey=kqhXNILSSIIjj9iHnwKwhVA0UJwcGG7a6xefBptS')
-		let content = await response.json()
-		
-		for(key in content) {
-			countries.push(content[key].name)
-		}
-		
-	}*/
-
+	getResponse();
 
 </script>
-
-
-
-
-
 
